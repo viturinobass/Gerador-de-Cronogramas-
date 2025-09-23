@@ -52,11 +52,7 @@ export function CronogramaGenerator({
             value={input}
             onChange={(e) => onInputChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="DIGITE AQUI A SUA IDÉIA DE CRONOGRAMA
-
-Ex: Cronograma para pizzaria com 20 postagens focado em família e tradição italiana
-Ex: 15 posts para salão de beleza voltado para mulheres de 25-40 anos
-Ex: Academia com foco em musculação, 25 posts para o mês"
+            placeholder="DIGITE AQUI A SUA IDEIA DE CRONOGRAMA"
             className="min-h-[200px] text-lg resize-none bg-background/50 border-white/20"
           />
           <p className="text-sm text-muted-foreground mt-2">
