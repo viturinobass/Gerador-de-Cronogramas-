@@ -38,6 +38,22 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
+    /* Gradients for the content generator */
+    --gradient-primary: linear-gradient(135deg, hsl(236, 72%, 79%) 0%, hsl(237, 63%, 64%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(4, 69%, 69%) 0%, hsl(17, 73%, 54%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142, 69%, 58%) 0%, hsl(158, 64%, 52%) 100%);
+    --gradient-background: linear-gradient(135deg, hsl(236, 72%, 79%) 0%, hsl(237, 63%, 64%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(168, 76%, 42%) 0%, hsl(329, 86%, 70%) 100%);
+
+    /* Shadows */
+    --shadow-elegant: 0 25px 50px hsla(222, 84%, 5%, 0.1);
+    --shadow-button: 0 8px 25px hsla(142, 69%, 58%, 0.3);
+    --shadow-glow: 0 0 40px hsla(236, 72%, 79%, 0.4);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --animation-float: float 20s infinite linear;
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -91,6 +107,13 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(236, 72%, 79%) 0%, hsl(237, 63%, 64%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(4, 69%, 69%) 0%, hsl(17, 73%, 54%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142, 69%, 58%) 0%, hsl(158, 64%, 52%) 100%);
+    --gradient-background: linear-gradient(135deg, hsl(236, 72%, 79%) 0%, hsl(237, 63%, 64%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(168, 76%, 42%) 0%, hsl(329, 86%, 70%) 100%);
   }
 }
 
@@ -101,5 +124,22 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    min-height: 100vh;
+  }
+
+  /* Keyframes for animations */
+  @keyframes float {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px hsla(236, 72%, 79%, 0.3); }
+    50% { box-shadow: 0 0 40px hsla(236, 72%, 79%, 0.6); }
   }
 }
