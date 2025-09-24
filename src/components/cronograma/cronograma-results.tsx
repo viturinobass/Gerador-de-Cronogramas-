@@ -1,7 +1,10 @@
+import { useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, RotateCcw, Calendar, Clock, Hash } from "lucide-react";
+import { Download, RotateCcw, Calendar, Clock, Hash, FileDown, FileText } from "lucide-react";
 import { CronogramaPost } from "@/types/cronograma";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface CronogramaResultsProps {
   cronograma: CronogramaPost[];
@@ -14,10 +17,43 @@ export function CronogramaResults({
   onExport, 
   onNewCronograma 
 }: CronogramaResultsProps) {
+  const cronogramaRef = useRef<HTMLDivElement>(null);
+
   if (!cronograma.length) return null;
 
+  const handleExportPDF = () => {
+    const input = cronogramaRef.current;
+    if (input) {
+      // Ocultar os botões durante a captura
+      const buttonsElement = input.querySelector('.action-buttons-container') as HTMLElement;
+      if (buttonsElement) {
+        buttonsElement.style.display = 'none';
+      }
+
+      html2canvas(input, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#09090b' // Cor de fundo escura para consistência
+      } as any).then(canvas => {
+        // Restaurar a visibilidade dos botões
+        if (buttonsElement) {
+          buttonsElement.style.display = 'flex';
+        }
+        
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'px',
+          format: [canvas.width, canvas.height]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        pdf.save('cronograma.pdf');
+      });
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div ref={cronogramaRef} className="space-y-6">
       <Card className="bg-card/80 backdrop-blur-sm border-white/20">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">
@@ -38,10 +74,10 @@ export function CronogramaResults({
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
-                      <span>Dia {post.dia} do mês</span>
+                      <span>{post.dia}</span>
                     </div>
                     
-                    <div className="text-base leading-relaxed">
+                    <div className="text-base leading-relaxed whitespace-pre-wrap">
                       {post.conteudo}
                     </div>
                     
@@ -75,15 +111,24 @@ export function CronogramaResults({
         </CardContent>
       </Card>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center action-buttons-container">
         <Button 
-          onClick={onExport}
+          onClick={handleExportPDF}
           variant="success"
           size="lg"
           className="flex items-center gap-2"
         >
-          <Download className="w-5 h-5" />
-          📱 Exportar Cronograma
+          <FileDown className="w-5 h-5" />
+          Exportar para PDF
+        </Button>
+        <Button 
+          onClick={onExport}
+          variant="outline"
+          size="lg"
+          className="flex items-center gap-2"
+        >
+          <FileText className="w-5 h-5" />
+          Exportar para TXT
         </Button>
         <Button 
           onClick={onNewCronograma}
@@ -92,7 +137,7 @@ export function CronogramaResults({
           className="flex items-center gap-2"
         >
           <RotateCcw className="w-5 h-5" />
-          🆕 Criar Novo Cronograma
+          Criar Novo Cronograma
         </Button>
       </div>
     </div>
