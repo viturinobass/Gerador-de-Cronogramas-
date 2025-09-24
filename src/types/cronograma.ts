@@ -1,5 +1,5 @@
 export interface CronogramaPost {
-  dia: number;
+  dia: string;
   tema: string;
   conteudo: string;
   horario: string;
@@ -33,6 +33,15 @@ export interface FormData {
   };
   frequenciaSemanal: string;
   horariosPreferencia: string;
+  diasSemana: {
+    segunda: boolean;
+    terca: boolean;
+    quarta: boolean;
+    quinta: boolean;
+    sexta: boolean;
+    sabado: boolean;
+    domingo: boolean;
+  };
   extras: {
     incluirStories: boolean;
     incluirReels: boolean;

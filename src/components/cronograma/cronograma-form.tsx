@@ -6,9 +6,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FormData } from "@/types/cronograma";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CronogramaFormProps {
-  onFillCronograma: (formData: FormData) => void;
+  onFillCronograma: (formData: FormData, mesSelecionado: string) => void;
 }
 
 export function CronogramaForm({ onFillCronograma }: CronogramaFormProps) {
@@ -39,6 +40,15 @@ export function CronogramaForm({ onFillCronograma }: CronogramaFormProps) {
     },
     frequenciaSemanal: "",
     horariosPreferencia: "",
+    diasSemana: {
+      segunda: false,
+      terca: false,
+      quarta: false,
+      quinta: false,
+      sexta: false,
+      sabado: false,
+      domingo: false,
+    },
     extras: {
       incluirStories: false,
       incluirReels: false,
@@ -50,6 +60,13 @@ export function CronogramaForm({ onFillCronograma }: CronogramaFormProps) {
     },
     detalhesExtras: "",
   });
+
+  const [mesSelecionado, setMesSelecionado] = useState<string>("Janeiro");
+
+  const meses = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -63,7 +80,7 @@ export function CronogramaForm({ onFillCronograma }: CronogramaFormProps) {
   };
 
   const handleSubmit = () => {
-    onFillCronograma(formData);
+    onFillCronograma(formData, mesSelecionado);
   };
 
   return (
@@ -249,9 +266,35 @@ export function CronogramaForm({ onFillCronograma }: CronogramaFormProps) {
               onChange={(e) => updateField('frequenciaSemanal', e.target.value)}
             />
           </div>
+
+          <div className="space-y-2">
+            <Label>Quais dias da semana prefere postar?</Label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { key: 'segunda', label: 'Segunda' },
+                { key: 'terca', label: 'Terça' },
+                { key: 'quarta', label: 'Quarta' },
+                { key: 'quinta', label: 'Quinta' },
+                { key: 'sexta', label: 'Sexta' },
+                { key: 'sabado', label: 'Sábado' },
+                { key: 'domingo', label: 'Domingo' },
+              ].map(({ key, label }) => (
+                <div key={key} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={key}
+                    checked={formData.diasSemana[key as keyof typeof formData.diasSemana]}
+                    onCheckedChange={(checked) => 
+                      updateNestedField('diasSemana', key, checked)
+                    }
+                  />
+                  <Label htmlFor={key}>{label}</Label>
+                </div>
+              ))}
+            </div>
+          </div>
           
           <div className="space-y-2">
-            <Label>Tem dias ou horários específicos que prefere?</Label>
+            <Label>Tem horários específicos que prefere?</Label>
             <Textarea 
               placeholder="Ex: Terças e quintas às 18h"
               value={formData.horariosPreferencia}
@@ -260,9 +303,27 @@ export function CronogramaForm({ onFillCronograma }: CronogramaFormProps) {
           </div>
         </div>
 
-        {/* 7. Extras */}
+        {/* 7. Mês do Cronograma */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">7. Extras</h3>
+          <h3 className="text-lg font-semibold">7. Mês do Cronograma</h3>
+          <div className="space-y-2">
+            <Label>Para qual mês você deseja o cronograma?</Label>
+            <Select value={mesSelecionado} onValueChange={setMesSelecionado}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o mês" />
+              </SelectTrigger>
+              <SelectContent>
+                {meses.map(mes => (
+                  <SelectItem key={mes} value={mes}>{mes}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* 8. Extras */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">8. Extras</h3>
           
           <div className="space-y-2">
             <Label>Você gostaria de incluir Stories e Reels além dos posts?</Label>
@@ -300,9 +361,9 @@ export function CronogramaForm({ onFillCronograma }: CronogramaFormProps) {
           </div>
         </div>
 
-        {/* 8. Detalhes finais */}
+        {/* 9. Detalhes finais */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">8. Detalhes finais</h3>
+          <h3 className="text-lg font-semibold">9. Detalhes finais</h3>
           
           <div className="space-y-2">
             <Label>Como prefere receber o cronograma?</Label>
