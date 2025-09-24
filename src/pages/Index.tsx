@@ -1,4 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useAuth } from "@/hooks/useAuth";
+import { LogOut } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import { GradientBackground } from "@/components/ui/gradient-background";
 import { GradientCard } from "@/components/ui/gradient-card";
 import { CronogramaForm } from "@/components/cronograma/cronograma-form";
@@ -14,10 +20,26 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiConfigured, setApiConfigured] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  useAuth(); // Apenas para garantir que o contexto de autenticação está ativo
 
   useEffect(() => {
     setApiConfigured(checkApiKey());
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast({ title: "Você saiu com sucesso! 👋" });
+      navigate("/login");
+    } catch (error) {
+      toast({
+        title: "Erro ao Sair",
+        description: "Não foi possível encerrar a sessão. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleFillCronograma = (formData: FormData, mesSelecionado: string) => {
     const prompt = gerarPromptInteligente(formData, mesSelecionado);
@@ -154,7 +176,20 @@ const Index = () => {
 
   return (
     <GradientBackground>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8 max-w-4xl relative">
+        
+        <div className="absolute top-4 right-4">
+            <Button 
+                variant="ghost"
+                size="icon" 
+                onClick={handleLogout}
+                className="text-white/80 hover:text-white hover:bg-white/10"
+                title="Sair"
+            >
+                <LogOut className="h-6 w-6" />
+            </Button>
+        </div>
+
         <GradientCard className="relative mb-8 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-secondary" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(255,255,255,0.1)_1px,_transparent_1px)] bg-[length:20px_20px] animate-float" />
